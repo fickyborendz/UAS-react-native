@@ -1,72 +1,150 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, StatusBar } from 'react-native';
-import { green100 } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Button, StatusBar } from 'react-native';
 
-// Dummy data for products
-const dummyProducts = [
-  { id: 1, name: 'Chitato', price: 10, image: require('../assets/product1.jpg') },
-  { id: 2, name: 'Pop Pop', price: 20, image: require('../assets/product2.jpg') },
-  { id: 3, name: 'Kacang Kulit', price: 30, image: require('../assets/product3.jpg') },
-  // Add more dummy products as needed
-];
-
-const ProductItem = ({ item, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={{ margin: 10, borderRadius: 10, overflow: 'hidden' }}>
-    <Image source={item.image} style={{ width: 150, height: 150 }} />
-    <Text style={{ fontSize: 16, marginTop: 5 }}>{item.name}</Text>
-    <Text style={{ fontSize: 14, color: 'gray' }}>Harga: Rp{item.price}</Text>
-  </TouchableOpacity>
-);
-
-const PromoBanner = () => (
-  <View style={{ backgroundColor: '#f0f0f0', padding: 10, alignItems: 'center', marginBottom: 20 }}>
-    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#900' }}>Promo Spesial Hari Ini!</Text>
-    <Text style={{ fontSize: 16 }}>Diskon 20% untuk semua produk!</Text>
-  </View>
-);
-
-const HomeScreen = ({ navigation }) => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    // Simulate fetching products from API
-    setProducts(dummyProducts);
-  }, []);
-
-  const renderItem = ({ item }) => <ProductItem item={item} onPress={() => navigation.navigate('ProductDetail', { product: item })} />;
+const HomeScreen = () => {
+  // Data profil seseorang
+  const profile = {
+    name: 'indah puspita sari',
+    bio: 'Bunga tanpa akar',
+    location: 'Jawa timur , Indonesia',
+  };
 
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar barStyle={'light-content'}
-      backgroundColor= 'green'/>
-      {/* Promo Banner */}
-      <PromoBanner />
-      {/* Your FlatList component for displaying products */}
-      <View style={{ flex: 1, padding: 20 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Selamat Datang</Text>
-        <FlatList
-          data={products}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
-          numColumns={2}
-        />
+      <StatusBar barStyle={'light-content'} backgroundColor='green' />
+      <Profile profile={profile} />
+      <ChatWindow />
+    </View>
+  )
+}
+
+const Profile = ({ profile }) => {
+  return (
+    <View style={styles.profileContainer}>
+      <Text style={styles.profileName}>{profile.name}</Text>
+      <Text style={styles.profileBio}>{profile.bio}</Text>
+      <Text style={styles.profileLocation}>{profile.location}</Text>
+    </View>
+  );
+};
+
+const ChatWindow = () => {
+  const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState('');
+
+  const handleSendMessage = () => {
+    if (messageInput) {
+      const newMessage = {
+        sender: 'Anda',
+        message: messageInput,
+        isSender: true, // Menandakan pesan dari pengirim
+      };
+
+      setMessages([...messages, newMessage]);
+      setMessageInput('');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.chatList}>
+        {messages.map((message, index) => (
+          <View key={index} style={[
+            styles.chatItem,
+            message.isSender ? styles.chatItemSender : styles.chatItemReceiver
+          ]}>
+            <Text style={[
+              styles.chatMessage,
+              message.isSender ? styles.chatMessageSender : styles.chatMessageReceiver
+            ]}>
+              {message.message}
+            </Text>
+          </View>
+        ))}
       </View>
-      {/* Navigation Bar */}
-      <View
-        style={{
-          flexDirection: 'row',
-          backgroundColor: '#ffffff',
-          elevation: 3,
-          paddingTop: 10,
-          paddingBottom: 10,
-          justifyContent: 'space-around', // To space icons evenly
-        }}
-      >
-       
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.messageInput}
+          value={messageInput}
+          onChangeText={(text) => setMessageInput(text)}
+          placeholder="Ketik pesan..."
+        />
+        <Button title="Kirim" onPress={handleSendMessage} />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  profileContainer: {
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  profileBio: {
+    fontSize: 15,
+    marginTop: 5,
+  },
+  profileLocation: {
+    fontSize: 15,
+    color: '#666',
+    marginTop: 5,
+  },
+  chatList: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  chatItem: {
+    maxWidth: '80%',
+    marginBottom: 10,
+    borderRadius: 10,
+    padding: 10,
+    alignSelf: 'flex-end',
+  },
+  chatItemSender: {
+    backgroundColor: '#DCF8C6', // Warna latar belakang untuk pesan pengirim
+    alignSelf: 'flex-end',
+  },
+  chatItemReceiver: {
+    backgroundColor: '#F0F0F0', // Warna latar belakang untuk pesan penerima
+    alignSelf: 'flex-start',
+  },
+  chatMessage: {
+    fontSize: 16,
+  },
+  chatMessageSender: {
+    color: '#000', // Warna teks untuk pesan pengirim
+  },
+  chatMessageReceiver: {
+    color: '#000', // Warna teks untuk pesan penerima
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  messageInput: {
+    flex: 1,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+});
 
 export default HomeScreen;
