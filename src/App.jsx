@@ -7,7 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from './screens/HomeScreen';
 import produkbaru from './screens/teman';
-import notivikasi from './screens/saya';
+import notivikasi from './screens/pesan';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
