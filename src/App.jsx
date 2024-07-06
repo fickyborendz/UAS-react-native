@@ -5,31 +5,41 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import HomeScreen from './screens/HomeScreen';
+import HomeScreen from './screens/Beranda';
 import produkbaru from './screens/teman';
-import notivikasi from './screens/pesan';
+import notivikasi from './screens/Saya';
+import beranda from './screens/Pesan';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="ChatMe" component={HomeScreen} options={{  headerStyle:{backgroundColor:"green"},
-          tabBarLabel: 'Pesan', 
+      <Tab.Screen name="ChatMe" component={HomeScreen} options={{  headerStyle:{backgroundColor:"#007bff"},
+          tabBarLabel: 'Beranda', 
           tabBarIcon: ({ color }) => (
-            <Ionicons name="chatbubble-ellipses-outline" color={color} size={26} /> 
+            <Ionicons name="home-outline" color={color} size={26} /> 
           ),
         }}/>
-      <Tab.Screen name="Teman" component={produkbaru} options={{ headerStyle:{backgroundColor:"green"},
+      <Tab.Screen name="Pesan" component={beranda} options={{ headerStyle:{backgroundColor:"#007bff"},
+          tabBarLabel: 'Pesan',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="chatbubble-ellipses-outline" color={color} size={26} />
+        
+          ),
+        }}/>
+      <Tab.Screen name="Teman" component={produkbaru} options={{ headerStyle:{backgroundColor:"#007bff"},
           tabBarLabel: 'Teman',
           tabBarIcon: ({ color }) => (
-            <Ionicons name="person-add-outline" color={color} size={26} />
+            <Ionicons name="people-outline" color={color} size={26} />
           ),
         }}/>
-      <Tab.Screen name="Saya" component={notivikasi} options={{ headerStyle:{backgroundColor:"green"},
+      <Tab.Screen name="Saya" component={notivikasi} options={{ headerStyle:{backgroundColor:"#007bff"},
           tabBarLabel: 'Saya',
           tabBarIcon: ({ color }) => (
             <Ionicons name="menu-outline" color={color} size={26} />
+        
             
           ),
         }}/>

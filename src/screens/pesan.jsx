@@ -1,30 +1,78 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Button, StatusBar, Image } from 'react-native';
 
-const ProfileScreen = () => {
+const HomeScreen = () => {
+  // Data profil seseorang
+  const profile = {
+    name: 'Indah Puspita Sari',
+    bio: 'Bunga tanpa akar',
+    location: 'Jawa Timur, Indonesia',
+    image: require('../assets/potoprofil.jpg') 
+  };
+
+  const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState('');
+
+  const handleSendMessage = () => {
+    if (messageInput) {
+      const newMessage = {
+        sender: 'Anda',
+        message: messageInput,
+        isSender: true,
+      };
+
+      setMessages([...messages, newMessage]);
+      setMessageInput('');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.profileImage}
-          source={{ uri: 'https://example.com/potoprofil.jpg' }} // Ganti dengan URL gambar profil Anda
-        />
-        <Text style={styles.name}>ficky prasetyo</Text>
-        <Text style={styles.bio}>Seseduh kopi yang pahit</Text>
+      <StatusBar barStyle={'light-content'} backgroundColor='#007bff' />
+      <Profile profile={profile} />
+      <ChatWindow messages={messages} messageInput={messageInput} setMessageInput={setMessageInput} onSendMessage={handleSendMessage} />
+    </View>
+  );
+};
+
+const Profile = ({ profile }) => {
+  return (
+    <View style={styles.profileContainer}>
+      <Image source={profile.image} style={styles.profileImage} />
+      <Text style={styles.profileName}>{profile.name}</Text>
+      <Text style={styles.profileBio}>{profile.bio}</Text>
+      <Text style={styles.profileLocation}>{profile.location}</Text>
+    </View>
+  );
+};
+
+const ChatWindow = ({ messages, messageInput, setMessageInput, onSendMessage }) => {
+  return (
+    <View style={styles.chatContainer}>
+      <View style={styles.chatList}>
+        {messages.map((message, index) => (
+          <View key={index} style={[
+            styles.chatItem,
+            message.isSender ? styles.chatItemSender : styles.chatItemReceiver
+          ]}>
+            <Text style={[
+              styles.chatMessage,
+              message.isSender ? styles.chatMessageSender : styles.chatMessageReceiver
+            ]}>
+              {message.message}
+            </Text>
+          </View>
+        ))}
       </View>
-      <View style={styles.infoContainer}>
-        <View style={styles.infoItem}>
-          <Text style={styles.label}>Umur:</Text>
-          <Text style={styles.info}>21 tahun</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.label}>Lokasi:</Text>
-          <Text style={styles.info}>Pamekasan</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.label}>Pekerjaan:</Text>
-          <Text style={styles.info}>Mahasiswa</Text>
-        </View>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.messageInput}
+          value={messageInput}
+          onChangeText={(text) => setMessageInput(text)}
+          placeholder="Ketik pesan..."
+        />
+        <Button title="Kirim" onPress={onSendMessage} />
       </View>
     </View>
   );
@@ -33,46 +81,81 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
   },
-  header: {
+  profileContainer: {
     alignItems: 'center',
-    paddingTop: 20,
-    paddingBottom: 30,
-    backgroundColor: '#4CAF50', // Warna latar belakang header
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 10,
   },
-  name: {
-    fontSize: 24,
+  profileName: {
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 5,
   },
-  bio: {
-    fontSize: 16,
-    color: '#ffffff',
-    textAlign: 'center',
+  profileBio: {
+    fontSize: 15,
+    marginTop: 5,
   },
-  infoContainer: {
+  profileLocation: {
+    fontSize: 15,
+    color: '#666',
+    marginTop: 5,
+  },
+  chatContainer: {
+    flex: 1,
+  },
+  chatList: {
+    flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,
+    paddingTop: 10,
   },
-  infoItem: {
-    flexDirection: 'row',
+  chatItem: {
+    maxWidth: '80%',
     marginBottom: 10,
+    borderRadius: 10,
+    padding: 10,
+    alignSelf: 'flex-end',
   },
-  label: {
-    fontWeight: 'bold',
+  chatItemSender: {
+    backgroundColor: '#DCF8C6',
+    alignSelf: 'flex-end',
+  },
+  chatItemReceiver: {
+    backgroundColor: '#F0F0F0',
+    alignSelf: 'flex-start',
+  },
+  chatMessage: {
+    fontSize: 16,
+  },
+  chatMessageSender: {
+    color: '#000', 
+  },
+  chatMessageReceiver: {
+    color: '#000', 
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  messageInput: {
+    flex: 1,
     marginRight: 10,
-  },
-  info: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     fontSize: 16,
   },
 });
 
-export default ProfileScreen;
+export default HomeScreen;

@@ -1,50 +1,102 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, FlatList, Text } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TextInput } from 'react-native';
 
-const SearchScreen = () => {
-  const [searchText, setSearchText] = useState('');
-  const [data, setData] = useState([
-    { id: '1', name: 'indah puspita sari' },
-    { id: '2', name: 'yongky' },
-    { id: '3', name: 'natasya' },
-    { id: '4', name: 'risky' },
-    { id: '5', name: 'galang pratama' },
-    { id: '6', name: 'sindy' },
-  ]);
-  const [filteredData, setFilteredData] = useState(data);
+const TemanComponent = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
+  // Data teman (bisa diambil dari API atau hard-coded)
+  const dataTeman = [
+    { id: '1', name: 'John Doe', image: require('../assets/foto 1.jpg') },
+    { id: '2', name: 'Jane Smith', image: require('../assets/foto 2.jpg') },
+    { id: '3', name: 'Michael Brown', image: require('../assets/potoprofil.jpg') },
+    // Tambahkan data teman lainnya sesuai kebutuhan
+  ];
+
+  // Handle search input change
   const handleSearch = (text) => {
-    setSearchText(text);
-    const filteredItems = data.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filteredItems);
+    setSearchQuery(text);
+    if (text) {
+      const filtered = dataTeman.filter(item =>
+        item.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData([]);
+    }
   };
 
+  // Render item untuk FlatList
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Image source={item.image} style={styles.itemImage} />
+      <Text style={styles.itemName}>{item.name}</Text>
+    </View>
+  );
+
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <View style={styles.container}>
+      <Text style={styles.title}>Teman</Text>
+      
+      {/* Search Input */}
       <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, paddingHorizontal: 10 }}
-        placeholder="Search"
+        style={styles.searchInput}
+        placeholder="Cari teman..."
         onChangeText={handleSearch}
-        value={searchText}
+        value={searchQuery}
       />
+
+      {/* FlatList */}
       <FlatList
-        data={filteredData}
+        data={searchQuery ? filteredData : dataTeman}
+        renderItem={renderItem}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 10 }}>
-            <Text>{item.name}</Text>
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <View style={{ marginTop: 20 }}>
-            <Text>No results found</Text>
-          </View>
-        )}
+        style={styles.flatList}
       />
     </View>
   );
-};
+}
 
-export default SearchScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  searchInput: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  flatList: {
+    width: '100%',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  itemImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  itemName: {
+    fontSize: 18,
+  },
+});
+
+export default TemanComponent;
